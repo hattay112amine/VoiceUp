@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:voiceup/controllers/auth_controller.dart';
 import 'package:voiceup/routes/app_routes.dart';
 import 'package:voiceup/theme/app_theme.dart';
 
@@ -32,18 +33,19 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
     );
 
     _animationController.forward();
-    // _checkAuthAndNavigate();
+    _checkAuthAndNavigate();
   }
 
-  // void _checkAuthAndNavigate() async {
-  //   await Future.delayed(const Duration(seconds: 2));
-  //   final authController = Get.put(AuthController(), permanent: true);
-  //   if (authController.isAuthenticated) {
-  //     Get.offAllNamed(AppRoutes.main);
-  //   } else {
-  //     Get.offAllNamed(AppRoutes.login);
-  //   }
-  // }
+  void _checkAuthAndNavigate() async {
+    await Future.delayed(const Duration(seconds: 2));
+    final authController = Get.put(AuthController(), permanent: true);
+    if (authController.isAuthenticated) {
+      Get.offAllNamed(AppRoutes.main);
+      //for now we don't have main screen
+    } else {
+      Get.offAllNamed(AppRoutes.login);
+    }
+  }
 
   @override
   void dispose() {
