@@ -56,7 +56,7 @@ class AppTheme {
         centerTitle: true,
         titleTextStyle: TextStyle(
           fontSize: 18,
-          fontWeight: FontVariation.weight.w600,
+          fontWeight: FontWeight.w600,
           color: textPrimaryColor,
         ),//TextStyle
         iconTheme: IconThemeData(color: textPrimaryColor),
