@@ -1,6 +1,7 @@
 import 'package:voiceup/controllers/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:voiceup/models/models.dart';
 import 'package:voiceup/routes/app_routes.dart';
 import 'package:voiceup/theme/app_theme.dart';
 
@@ -18,25 +19,24 @@ class ProfileView extends GetView<ProfileController> {
         ),
         actions: [
           Obx(
-          () => TextButton(
-            onPressed:
-              controller.isEditing
-                  ? controller.toggleEditing
-                  : controller.toggleEditing,
-            child: Text(
-                controller.isEditing ? "Cancel" : "Edit"
-                    ,style: TextStyle(
-              color: controller.isEditing?
-                  AppTheme.errorColor
-                  :AppTheme.primaryColor,
+                () => TextButton(
+              onPressed: controller.toggleEditing,
+              child: Text(
+                controller.isEditing ? "Cancel" : "Edit",
+                style: TextStyle(
+                  color: controller.isEditing
+                      ? AppTheme.errorColor
+                      : AppTheme.primaryColor,
+                ),
+              ),
             ),
-            ),
-          ),
           ),
         ],
       ),
       body: Obx(() {
         final user = controller.currentUser;
+
+        // Si l'utilisateur n'est pas chargé
         if (user == null) {
           return Center(
             child: CircularProgressIndicator(
@@ -56,10 +56,11 @@ class ProfileView extends GetView<ProfileController> {
                       CircleAvatar(
                         radius: 60,
                         backgroundColor: AppTheme.primaryColor,
-                        child: user.photoURL.isNotEmpty
+                        // CORRECTION : Plus besoin de "as UserModel"
+                        child: (user.photoURL != null && user.photoURL!.isNotEmpty)
                             ? ClipOval(
                           child: Image.network(
-                            user.photoURL,
+                            user.photoURL!,
                             width: 120,
                             height: 120,
                             fit: BoxFit.cover,
@@ -67,7 +68,6 @@ class ProfileView extends GetView<ProfileController> {
                               return _buildDefaultAvatar(user);
                             },
                           ),
-
                         )
                             : _buildDefaultAvatar(user),
                       ),
@@ -83,9 +83,8 @@ class ProfileView extends GetView<ProfileController> {
                             ),
                             child: IconButton(
                               onPressed: () {
-                                Get.snackbar('Info',
-                                    'Photo Update Coming Soon!'
-                                );
+                                Get.snackbar(
+                                    'Info', 'Photo Update Coming Soon!');
                               },
                               icon: const Icon(
                                 Icons.camera_alt,
@@ -97,130 +96,134 @@ class ProfileView extends GetView<ProfileController> {
                         ),
                     ],
                   ),
-                   SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text(
                     user.displayName,
-                    style: Theme.of(Get.context!).textTheme.headlineSmall?.copyWith(
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                   SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     user.email,
-                    style: Theme.of(Get.context!).textTheme.bodyMedium
-                        ?.copyWith(color: Colors.grey, // Ou AppTheme.primaryColor selon votre image
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey,
                     ),
                   ),
-          SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-            decoration: BoxDecoration(
-              color: user.isOnline
-                  ? AppTheme.successColor.withOpacity(0.1)
-                  : AppTheme.textSecondaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  height: 8,
-                  width: 8,
-                  decoration: BoxDecoration(
-                    color: user.isOnline ? AppTheme.successColor:
-                    AppTheme.textSecondaryColor,
-                    borderRadius: BorderRadius.circular(4),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding:
+                    const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: user.isOnline
+                          ? AppTheme.successColor.withOpacity(0.1)
+                          : AppTheme.textSecondaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          height: 8,
+                          width: 8,
+                          decoration: BoxDecoration(
+                            color: user.isOnline
+                                ? AppTheme.successColor
+                                : AppTheme.textSecondaryColor,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          user.isOnline ? 'Online' : 'Offline',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
+                            color: user.isOnline
+                                ? AppTheme.successColor
+                                : AppTheme.textSecondaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(width: 6),
-                Text(
-                  user.isOnline ? 'Online' : 'Offline',
-                  style: Theme.of(Get.context!).textTheme.bodySmall?.copyWith(
-                    color: user.isOnline
-                        ? AppTheme.successColor
-                        : AppTheme.textSecondaryColor,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-              ),
-        ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     controller.getJoinedData(),
-                    style: Theme.of(Get.context!).textTheme.bodySmall?.copyWith(
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppTheme.textSecondaryColor,
                     ),
                   ),
-          ],
-        ),
-            SizedBox(height: 32),
-            Obx(
-            () => Card(
-            child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-            Text(
-            "Personal Information",
-            style: Theme.of(Get.context!).textTheme.headlineSmall?.copyWith(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            ),
-            ),
-              SizedBox(height: 20),
-              TextFormField(
-                controller: controller.displayNameController,
-                enabled: controller.isEditing,
-                decoration: InputDecoration(
-                  labelText: 'Display Name',
-                  prefixIcon: const Icon(Icons.person_outlined),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                ],
               ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: controller.emailController,
-                enabled: false,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: const Icon(Icons.email_outlined),
-                  helperText: 'Email can\'t be changed',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-              if (controller.isEditing) ...[
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: controller.isLoading
-                        ? null
-                        : () => controller.updateProfile,
-                    child: controller.isLoading
-                        ? SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
+              const SizedBox(height: 32),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Personal Information",
+                        style:
+                        Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    )
-                        : Text("Save Changes"),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        controller: controller.displayNameController,
+                        enabled: controller.isEditing,
+                        decoration: InputDecoration(
+                          labelText: 'Display Name',
+                          prefixIcon: const Icon(Icons.person_outlined),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: controller.emailController,
+                        enabled: false,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          prefixIcon: const Icon(Icons.email_outlined),
+                          helperText: 'Email can\'t be changed',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      if (controller.isEditing) ...[
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: controller.isLoading
+                                ? null
+                                : controller.updateProfile,
+                            child: controller.isLoading
+                                ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                                : const Text("Save Changes"),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
-              ],
-            ],
-          ),
-        ),
-        ),
-        ),
-              SizedBox(height: 32),
+              ),
+              const SizedBox(height: 32),
               Column(
                 children: [
                   Card(
@@ -230,35 +233,35 @@ class ProfileView extends GetView<ProfileController> {
                           leading: Icon(
                             Icons.security,
                             color: AppTheme.primaryColor,
-                          ), // Icon
-                          title: Text("Change Password"),
-                          trailing: Icon(
+                          ),
+                          title: const Text("Change Password"),
+                          trailing: const Icon(
                             Icons.arrow_forward_ios,
                             size: 16,
-                          ), // Icon
+                          ),
                           onTap: () => Get.toNamed(AppRoutes.changePassword),
                         ),
-                        Divider(height: 1,color: Colors.grey),
+                        const Divider(height: 1, color: Colors.grey),
                         ListTile(
-                        leading: Icon(
-                        Icons.delete_forever,
-                        color: AppTheme.accentColor,
+                          leading: Icon(
+                            Icons.delete_forever,
+                            color: AppTheme.accentColor,
+                          ),
+                          title: const Text("Delete Account"),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                          ),
+                          onTap: controller.deleteAccount,
                         ),
-                        title: Text("Delete Account"),
-                        trailing: Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16,
-                        ),
-                        onTap: controller.deleteAccount,
-                        ),
-                        Divider(height: 1,color: Colors.grey),
+                        const Divider(height: 1, color: Colors.grey),
                         ListTile(
                           leading: Icon(
                             Icons.logout,
                             color: AppTheme.errorColor,
                           ),
-                          title: Text("Sign Out"),
-                          trailing: Icon(
+                          title: const Text("Sign Out"),
+                          trailing: const Icon(
                             Icons.arrow_forward_ios,
                             size: 16,
                           ),
@@ -267,28 +270,31 @@ class ProfileView extends GetView<ProfileController> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Text(
                     "VoiceUp v1.0.0",
-                    style: Theme.of(Get.context!).textTheme.bodySmall?.copyWith(
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppTheme.textSecondaryColor,
                     ),
                   )
                 ],
               ),
-        ],
-        ),
+            ],
+          ),
         );
       }),
     );
   }
-  Widget _buildDefaultAvatar(dynamic user) {
-    return Text(
-      user.displayName.isNotEmpty ? user.displayName[0].toUpperCase() : '?',
-      style: const TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.w600,
-        fontSize: 32,
+
+  Widget _buildDefaultAvatar(UserModel user) {
+    return Center(
+      child: Text(
+        user.displayName.isNotEmpty ? user.displayName[0].toUpperCase() : '?',
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+          fontSize: 32,
+        ),
       ),
     );
   }

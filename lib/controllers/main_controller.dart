@@ -15,8 +15,8 @@ class MainController extends GetxController {
   void onInit() {
     super.onInit();
 
-    // Get.lazyPut(() => HomeController());
-    // Get.lazyPut(() => FriendsController());
+    Get.lazyPut(() => HomeController());
+     Get.lazyPut(() => FriendsController());
      Get.lazyPut(() => UsersListController());
     Get.lazyPut(() => ProfileController());
   }
@@ -40,10 +40,9 @@ class MainController extends GetxController {
 
   int getUnreadCount() {
     try {
-      // final homeController = Get.find<HomeController>();
-      // return homeController.getTotalUnreadCount();
+      final homeController = Get.find<HomeController>();
+       return homeController.getTotalUnreadCount();
 
-      return 5;
     } catch (e) {
       return 0;
     }
@@ -51,10 +50,9 @@ class MainController extends GetxController {
 
   int getNotificationCount() {
     try {
-      // final homeController = Get.find<HomeController>();
-      // return homeController.getUnreadNotificationsCount();
+       final homeController = Get.find<HomeController>();
+       return homeController.getUnreadNotificationsCount();
 
-      return 7;
     } catch (e) {
       return 0;
     }

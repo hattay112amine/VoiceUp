@@ -4,6 +4,8 @@ import 'package:voiceup/views/find_people_view.dart';
 import 'package:voiceup/views/profile/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:voiceup/views/widgets/friends_view.dart';
+import 'package:voiceup/views/widgets/home_view.dart';
 
 class MainView extends GetView<MainController> {
   @override
@@ -13,11 +15,10 @@ class MainView extends GetView<MainController> {
         controller: controller.pageController,
         onPageChanged: controller.onPageChanged,
         children: [
-          // HomeView(),
           // FriendsView(),
           // UsersListView(),
-          Container(),
-          Container(),
+          HomeView(),
+          FriendsView(),
           FindPeopleView(),
           ProfileView(),
         ],

@@ -1,16 +1,24 @@
 import 'package:get/get.dart';
+import 'package:voiceup/controllers/friend_requests_controller.dart';
+import 'package:voiceup/controllers/friends_controller.dart';
+import 'package:voiceup/controllers/home_controller.dart';
 import 'package:voiceup/controllers/main_controller.dart';
 import 'package:voiceup/controllers/profile_controller.dart';
+import 'package:voiceup/controllers/users_list_controller.dart';
 import 'package:voiceup/routes/app_routes.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:voiceup/views/auth/forgot_password_view.dart';
 import 'package:voiceup/views/auth/login_view.dart';
+import 'package:voiceup/views/find_people_view.dart';
 import 'package:voiceup/views/profile/main_view.dart';
 import 'package:voiceup/views/profile/profile_view.dart';
 import 'package:voiceup/views/auth/register_view.dart';
 import 'package:voiceup/views/profile/change_password_view.dart';
 import 'package:voiceup/views/splash_view.dart';
+import 'package:voiceup/views/widgets/friend_requests_view.dart';
+import 'package:voiceup/views/widgets/friends_view.dart';
+import 'package:voiceup/views/widgets/home_view.dart';
 
 class AppPages {
   static const initial = AppRoutes.splash;
@@ -43,13 +51,13 @@ class AppPages {
       }),
     ),
 
-    // GetPage(
-    //   name: AppRoutes.home,
-    //   page: () => const HomeView(),
-    //   binding: BindingsBuilder(() {
-    //     Get.put(HomeController());
-    //   }),
-    // ),
+    GetPage(
+      name: AppRoutes.home,
+      page: () => HomeView(),
+      binding: BindingsBuilder(() {
+        Get.put(HomeController());
+      }),
+    ),
 
     GetPage(
       name: AppRoutes.profile,
@@ -65,24 +73,27 @@ class AppPages {
     //     Get.put(ChatController());
     //   }),
     // ),
-    // GetPage(
-    //   name: AppRoutes.usersList,
-    //   page: () => const UsersListView(),
-    // ),
-    // GetPage(
-    //   name: AppRoutes.friends,
-    //   page: () => const FriendsView(),
-    //   binding: BindingsBuilder(() {
-    //     Get.put(FriendsController());
-    //   }),
-    // ),
-    // GetPage(
-    //   name: AppRoutes.friendRequests,
-    //   page: () => const FriendRequestsView(),
-    //   binding: BindingsBuilder(() {
-    //     Get.put(FriendRequestsController());
-    //   }),
-    // ),
+    GetPage(
+      name: AppRoutes.usersList,
+      page: () => FindPeopleView(),
+      binding: BindingsBuilder(() {
+        Get.put(UsersListController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.friends,
+      page: () => FriendsView(),
+      binding: BindingsBuilder(() {
+        Get.put(FriendsController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.friendRequests,
+      page: () => FriendRequestsView(),
+      binding: BindingsBuilder(() {
+        Get.put(FriendRequestsController());
+      }),
+    ),
     // GetPage(
     //   name: AppRoutes.notifications,
     //   page: () => const NotificationsView(),

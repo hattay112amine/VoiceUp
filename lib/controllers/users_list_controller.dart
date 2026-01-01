@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/root/parse_route.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
@@ -8,6 +7,7 @@ import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:get/route_manager.dart';
 import 'package:uuid/uuid.dart';
 import 'package:voiceup/controllers/auth_controller.dart';
+import 'package:voiceup/models/models.dart';
 // Note: Assure-toi que AuthController est bien accessible ou mocké aussi.
 
 enum UserRelationshipStatus {
@@ -16,12 +16,6 @@ enum UserRelationshipStatus {
   friendRequestReceived,
   friends,
   blocked,
-}
-
-enum FriendRequestStatus {
-  pending,
-  accepted,
-  declined,
 }
 
 class UsersListController extends GetxController {
@@ -367,23 +361,53 @@ class MockFirestoreService {
   // Simule une liste d'utilisateurs qui vient de la base de données
   Stream<List<UserModel>> getAllUsersStream() {
     return Stream.value([
-      UserModel(id: 'user2', displayName: 'Alice Backend', email: 'alice@test.com', isOnline: true, lastSeen: DateTime.now()),
-      UserModel(id: 'user3', displayName: 'Bob Database', email: 'bob@test.com', isOnline: false, lastSeen: DateTime.now().subtract(Duration(hours: 2))),
-      UserModel(id: 'user4', displayName: 'Charlie Firebase', email: 'charlie@test.com', isOnline: true, lastSeen: DateTime.now()),
+      UserModel(id: 'user2', displayName: 'Alice Backend', email: 'alice@test.com', photoURL: 'https://i.pravatar.cc/150?u=alice', isOnline: true),
+      UserModel(id: 'user3', displayName: 'Bob Database', email: 'bob@test.com', photoURL: '', isOnline: false),
+      UserModel(id: 'user4', displayName: 'Charlie Firebase', email: 'charlie@test.com', photoURL: 'https://i.pravatar.cc/150?u=charlie', isOnline: true),
+      UserModel(id: 'user5', displayName: 'Sarah Flutter', email: 'sarah@test.com', photoURL: null, isOnline: true),
+      UserModel(id: 'user6', displayName: 'Thomas Code', email: 'thomas@test.com', photoURL: 'https://i.pravatar.cc/150?u=thomas', isOnline: false),
     ]);
   }
 
-  // Simule les requêtes envoyées
   Stream<List<FriendRequestModel>> getSentFriendRequestsStream(String currentUserId) {
-    // Retourne une liste vide ou avec des fausses données pour tester
-    return Stream.value([]);
+    return Stream.value([
+      FriendRequestModel(
+          id: 'req_sent_1',
+          senderId: currentUserId,
+          receiverId: 'user2', // On a envoyé une demande à Alice
+          status: FriendRequestStatus.pending,
+          createdAt: DateTime.now()
+      ),
+    ]);
   }
 
   // Simule les requêtes reçues
   Stream<List<FriendRequestModel>> getFriendRequestsStream(String currentUserId) {
-    // Exemple : Charlie t'a envoyé une demande
     return Stream.value([
-      FriendRequestModel(id: 'req1', senderId: 'user4', receiverId: currentUserId, status: FriendRequestStatus.pending, createdAt: DateTime.now())
+      // Demande de Charlie
+      FriendRequestModel(
+          id: 'req1',
+          senderId: 'user4',
+          receiverId: currentUserId,
+          status: FriendRequestStatus.pending,
+          createdAt: DateTime.now().subtract(Duration(minutes: 30))
+      ),
+      // Demande de Sarah
+      FriendRequestModel(
+          id: 'req2',
+          senderId: 'user5',
+          receiverId: currentUserId,
+          status: FriendRequestStatus.pending,
+          createdAt: DateTime.now().subtract(Duration(hours: 2))
+      ),
+      // Demande de Thomas
+      FriendRequestModel(
+          id: 'req3',
+          senderId: 'user6',
+          receiverId: currentUserId,
+          status: FriendRequestStatus.pending,
+          createdAt: DateTime.now().subtract(Duration(days: 1))
+      ),
     ]);
   }
 
@@ -420,47 +444,25 @@ class MockFirestoreService {
 }
 
 // --- MODÈLES DE DONNÉES (DUMMY) ---
-
-class UserModel {
-  final String id;
-  final String displayName;
-  final String email;
-  final bool isOnline;
-  final DateTime? lastSeen;
-
-  UserModel({
-    required this.id,
-    required this.displayName,
-    required this.email,
-    this.isOnline = false,
-    this.lastSeen,
-  });
-}
-
-class FriendRequestModel {
-  final String id;
-  final String senderId;
-  final String receiverId;
-  final FriendRequestStatus status;
-  final DateTime createdAt;
-
-  FriendRequestModel({
-    required this.id,
-    required this.senderId,
-    required this.receiverId,
-    required this.status,
-    required this.createdAt,
-  });
-}
-
 class FriendshipModel {
+  final String id; // C'est toujours bien d'avoir un ID pour la relation elle-même
   final String user1Id;
   final String user2Id;
   final bool isBlocked;
 
   FriendshipModel({
+    this.id = '', // Valeur par défaut ou requise
     required this.user1Id,
     required this.user2Id,
     this.isBlocked = false,
   });
+
+  // Cette méthode permet de savoir qui est "l'autre" personne dans la relation
+  String getOtherUserId(String currentUserId) {
+    if (user1Id == currentUserId) {
+      return user2Id;
+    } else {
+      return user1Id;
+    }
+  }
 }

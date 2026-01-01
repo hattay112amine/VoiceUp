@@ -1,22 +1,30 @@
 import 'package:get/get.dart';
+import 'package:voiceup/models/models.dart';
+
 
 class AuthController extends GetxController {
   RxBool isAuthenticated = true.obs;
   RxBool isLoading = false.obs;
 
+  // Utilisation du UserModel importé
   final Rx<UserModel> currentUser = UserModel(
+    id: 'user1', // ID nécessaire pour UsersListController
     displayName: 'Mohamed Amine Hattay',
     email: 'hattay112@gmail.com',
+    isOnline: true,
+    lastSeen: DateTime.now(),
     photoURL: 'https://i.pravatar.cc/150?img=3',
   ).obs;
 
-  get user => null;
+  // CORRECTION ICI : Retourner la valeur actuelle, pas null
+  UserModel? get user => currentUser.value;
 
   void signInWithEmailAndPassword(String email, String password) async {
     isLoading.value = true;
     await Future.delayed(const Duration(seconds: 2));
     isAuthenticated.value = true;
     currentUser.value = UserModel(
+      id: 'user1', // Mock ID
       displayName: 'Mohamed Amine Hattay',
       email: email,
       photoURL: 'https://i.pravatar.cc/150?img=3',
@@ -30,6 +38,7 @@ class AuthController extends GetxController {
     await Future.delayed(const Duration(seconds: 2));
     isAuthenticated.value = true;
     currentUser.value = UserModel(
+      id: 'user_new', // Mock ID
       displayName: name,
       email: email,
       photoURL: 'https://i.pravatar.cc/150?img=3',
@@ -44,22 +53,4 @@ class AuthController extends GetxController {
   }
 
   Future<void> signOut() async {}
-}
-
-class UserModel {
-  final String displayName;
-  final String email;
-  final String photoURL;
-
-  UserModel({
-    required this.displayName,
-    required this.email,
-    required this.photoURL,
-  });
-
-  bool get isOnline => true;
-
-  get id => null;
-
-  get lastSeen => null; // mock online status
 }
